@@ -1,0 +1,34 @@
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: gitops-teamA
+users:
+ - user1 #TODO create user1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding  ##TODO ClusterRoleBinding
+metadata:
+  name: teamA-gitops-user-role-binding
+  namespace: teamA-namespace ##TODO con ClusterRoleBinding no es necesario
+subjects:
+- kind: Group
+  name: teamA
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: gitops-user-role
+  apiGroup: rbac.authorization.k8s.io
+---
+#TODO reviewed this
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gitops-user-role
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - '*'
+  verbs:
+  - '*'
