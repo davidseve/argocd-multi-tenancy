@@ -3,6 +3,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
   name: openshift-gitops
+  namespace: argocd-cluster-scope
 spec:
   rbac:
     defaultPolicy: 'role:none'
@@ -17,7 +18,6 @@ spec:
       p, role:none, gpgkeys, get, *, deny
 
       g, system:cluster-admins, role:admin
-      g, gitops-admins, role:adminn
     scopes: '[groups]'
 
   resourceHealthChecks:

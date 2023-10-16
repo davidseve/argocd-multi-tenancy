@@ -1,8 +1,9 @@
-#TODO
+
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
-  name: openshift-gitops
+  name: openshift-gitops-group-a
+  namespace: gitops-group-a
 spec:
   rbac:
     defaultPolicy: 'role:none'
@@ -20,8 +21,8 @@ spec:
       g, gitops-admins, role:admin
 
       #TODO add permision at project level
-      p, role:users-group, clusters, get, https://kubernetes.default.svc, allow
-      g, users-group, role:users-group
+      g, gitops-group-a, role:gitops-group-a
+      p, role:gitops-group-a, clusters, get, https://kubernetes.default.svc, allow
 
     scopes: '[groups]'
 
