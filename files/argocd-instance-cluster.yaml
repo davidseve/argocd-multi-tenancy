@@ -1,4 +1,13 @@
-#TODO
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd-cluster-scope-applications
+  label: 
+    argocd.argoproj.io/managed-by: argocd-cluster-scope
+spec:
+  finalizers:
+  - kubernetes
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
@@ -17,8 +26,8 @@ spec:
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
 
-      g, system:cluster-admins, role:admin
-    scopes: '[groups]'
+      g, kubeadmin, role:admin
+    scopes: '[groups,name]'
 
   resourceHealthChecks:
     - group: operators.coreos.com

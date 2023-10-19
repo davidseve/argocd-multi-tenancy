@@ -2,13 +2,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
-  name: openshift-gitops-group-a
+  name: openshift-group-a
   namespace: gitops-group-a
 spec:
   rbac:
     defaultPolicy: 'role:none'
     policy: |-
-      # Access Control TODO que pasa si no meto esto
+      # Default policy with no privileges
       p, role:none, applications, get, */*, deny
       p, role:none, certificates, get, *, deny
       p, role:none, clusters, get, *, deny
@@ -17,14 +17,14 @@ spec:
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
 
-      g, system:cluster-admins, role:admin
-      g, gitops-admins, role:admin
+      # Admin privileges to admin user
+      g, kubeadmin, role:admin
 
-      #TODO add permision at project level
-      g, gitops-group-a, role:gitops-group-a
-      p, role:gitops-group-a, clusters, get, https://kubernetes.default.svc, allow
+      #Privileges at project level
+      g, group-a, role:group-a
+      p, role:group-a, clusters, get, https://kubernetes.default.svc, allow
 
-    scopes: '[groups]'
+    scopes: '[groups,name]'
 
   resourceHealthChecks:
     - group: operators.coreos.com
@@ -82,6 +82,8 @@ spec:
         return hs
         
   server:
+    route:
+      enabled: true #creates an openshift route to access Argo CD UI
     autoscale:
       enabled: false
     grpc:
@@ -96,8 +98,6 @@ spec:
       requests:
         cpu: 125m
         memory: 128Mi
-    route:
-      enabled: true
     service:
       type: ''
   grafana:
@@ -134,57 +134,49 @@ spec:
           cpu: 250m
           memory: 128Mi
     provider: dex
-  applicationSet:
-    resources:
-      limits:
-        cpu: '2'
-        memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 512Mi
-    webhookServer:
-      ingress:
-        enabled: false
-      route:
-        enabled: false
-  repo:
-    resources:
-      limits:
-        cpu: '1'
-        memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-  resourceExclusions: |
-    - apiGroups:
-      - tekton.dev
-      clusters:
-      - '*'
-      kinds:
-      - TaskRun
-      - PipelineRun
+  # applicationSet:
+    # resources:
+    #   limits:
+    #     cpu: '2'
+    #     memory: 1Gi
+    #   requests:
+    #     cpu: 250m
+    #     memory: 512Mi
+    # webhookServer:
+    #   ingress:
+    #     enabled: false
+    #   route:
+    #     enabled: false
+  # repo:
+  #   resources:
+  #     limits:
+  #       cpu: '1'
+  #       memory: 1Gi
+  #     requests:
+  #       cpu: 250m
+  #       memory: 256Mi
   ha:
     enabled: false
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
-  redis:
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
-  controller:
-    resources:
-      limits:
-        cpu: '2'
-        memory: 2Gi
-      requests:
-        cpu: 250m
-        memory: 1Gi
+    # resources:
+    #   limits:
+    #     cpu: 500m
+    #     memory: 256Mi
+    #   requests:
+    #     cpu: 250m
+    #     memory: 128Mi
+  # redis:
+  #   resources:
+  #     limits:
+  #       cpu: 500m
+  #       memory: 256Mi
+  #     requests:
+  #       cpu: 250m
+  #       memory: 128Mi
+  # controller:
+  #   resources:
+  #     limits:
+  #       cpu: '2'
+  #       memory: 2Gi
+  #     requests:
+  #       cpu: 250m
+  #       memory: 1Gi

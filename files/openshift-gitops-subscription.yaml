@@ -17,13 +17,13 @@ spec:
   name: openshift-gitops-operator
   source: redhat-operators
   sourceNamespace: openshift-marketplace
-  config:
-    env:
-    - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
-      value: "true"
-    - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
-      value: argocd-cluster-scope
-    - name: DISABLE_DEFAULT_ARGOCD_CONSOLELINK
-      value: 'true'
-  ha:
-    enabled: true
+  # config:
+  #   env:
+  #   - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
+  #     value: "true"
+  #   - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
+  #     value: argocd-cluster-scope
+  #   - name: DISABLE_DEFAULT_ARGOCD_CONSOLELINK
+  #     value: 'true'
+  # ha:
+  #   enabled: true
