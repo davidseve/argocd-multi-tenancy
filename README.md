@@ -1,5 +1,7 @@
 # ArgoCD multi-tenancy example
 
+## ArgoCD architecture
+TODO
 ## Create users
 
 We need two users `userA` and `userB`. If you are using CodeReady Containers you can use this script
@@ -7,8 +9,6 @@ We need two users `userA` and `userB`. If you are using CodeReady Containers you
 ```bash
 ./scripts/createUsers.sh
 ```
-
-#TODO ver si me cargo el user admin del cluster
 
 Then we create per each user:
 - Namespace for applications
@@ -31,7 +31,7 @@ spec:
     enabled: true
 ```
 
-- We are going to configure Openshift GitOps to do not create the default cluster-wide ArgoCD instance.
+- Configure Openshift GitOps to do not create the default cluster-wide ArgoCD instance.
 ```yaml
 spec:
   config:
@@ -40,7 +40,7 @@ spec:
       value: "true"
 ```
 
-- We are going to configure Openshift GitOps to create ArgoCD instance cluster-scope in the namespace `argocd-cluster-scope`.
+- Configure Openshift GitOps to create ArgoCD instance cluster-scope in the namespace `argocd-cluster-scope`.
 ```yaml
 spec:
   config:
@@ -49,7 +49,7 @@ spec:
       value: argocd-cluster-scope
 ```
 
-- We are going to configure Openshift GitOps to do not create link to default instance.
+- Configure Openshift GitOps to do not create link to default instance.
 ```yaml
 spec:
   config:
@@ -58,7 +58,6 @@ spec:
       value: 'true'
 ```
 
-- We will also be able to create ArgoCD instance namespaces-scope.
 - Create Openshift GitOps subscription
 ```bash
 oc apply -f files/openshift-gitops-subscription.yaml
@@ -70,12 +69,17 @@ oc apply -f files/openshift-gitops-subscription.yaml
   - https://developers.redhat.com/articles/2021/08/03/managing-gitops-control-planes-secure-gitops-practices
   - https://argocd-operator.readthedocs.io/en/latest/usage/ha/
 
+### Create namespaces for ArgoCD instances
+TODO
+```bash
+oc apply -f files/namespaces-for-argocd-instances.yaml
+```
 
 ## Create ArgoCD instance namespace-scope
 
-### Configure RBAC cluster-scope
+### Configure RBAC namespace-scope
 
-- New ArgoCD role with no privileges and we set it as `defaultPolicy` 
+- Create a ArgoCD role with no privileges and we set it as `defaultPolicy` 
 ```yaml
 spec:
   rbac:
@@ -91,7 +95,7 @@ spec:
       p, role:none, gpgkeys, get, *, deny
 ```
 
-- Configure our admin user wiht admin role
+- Configure our admin user with admin role
 ```yaml
 spec:
   rbac:
@@ -127,7 +131,7 @@ spec:
   - https://cloud.redhat.com/blog/a-guide-to-using-gitops-and-argocd-with-rbac
 
 ### Single Sing On
-You can log into the default Argo CD instance in the openshift-gitops namespace using the OpenShift or kubeadmin credentials. As an admin you can disable the Dex installation after the Operator is installed which will remove the Dex deployment from the openshift-gitops namespace.
+You can log into the default Argo CD instance using the OpenShift users or kubeadmin credentials. As an admin you can disable the Dex installation after the Operator is installed which will remove the Dex deployment from the openshift-gitops namespace.
 
 ```yaml
   sso:
@@ -170,28 +174,25 @@ TODO
 ### Hing Availability
 TODO
 ### Create instance
+- Create the ArgoCD instance for the group a.
 ```bash
 oc apply -f files/argocd-instance-group-a.yaml
 ```
-
+- Create the ArgoCD instance for the group b.
+```bash
+oc apply -f files/argocd-instance-group-b.yaml
+```
 ## ArgoCD projects
+TODO
+### Create namespaces for applications
+TODO
+argocd.argoproj.io/managed-by
+```bash
+oc apply -f files/namespaces-for-workloads.yaml
+```
+### Create ArgoCD applications to validate privileges
 TODO
 ## ArgoCD Notifications
 TODO
-## Create ArgoCD instance cluster-scope in not default namespace
-TODO?
-
-
-### Configure RBAC cluster-scope
-
-
-
-kubeadmin no puede hacer nada, no tiene el role:admin
-userA puede hacer login!!
-puedo crear aplicaciones en otro namespace sin el label
-puedo crear aplicaciones en otro namespace con el label
-
-### Create instance
-```bash
-oc apply -f files/argocd-instance-cluster.yaml
-```
+## ArgoCD Monitoring
+TODO
