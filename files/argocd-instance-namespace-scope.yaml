@@ -117,7 +117,7 @@ spec:
   monitoring:
     enabled: false
   notifications:
-    enabled: false
+    enabled: true
   prometheus:
     enabled: false
     ingress:

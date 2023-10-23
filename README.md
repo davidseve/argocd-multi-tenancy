@@ -93,8 +93,6 @@ oc apply -f files/openshift-gitops-subscription.yaml
 
 ### Configure RBAC namespace-scope
 
-TODO user admin en ocp no es admin
-
 - Create a ArgoCD role with no privileges and we set it as `defaultPolicy` 
 ```yaml
 spec:
@@ -110,6 +108,7 @@ spec:
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
 ```
+TODO user admin en ocp no es admin
 
 - Configure our admin user with admin role
 ```yaml
@@ -168,6 +167,8 @@ You can log into the default Argo CD instance using the OpenShift users or kubea
 
 
 Seguir por aqui: https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#setting-up-a-new-argo-cd-instance
+
+https://docs.openshift.com/gitops/1.10/argocd_instance/argo-cd-cr-component-properties.html#argo-cd-properties_argo-cd-cr-component-properties
 
 ### Configure resource quota/requests for OpenShift GitOps workloads
 
@@ -237,6 +238,20 @@ spec:
 TODO
 ### Server
 TODO
+```yaml
+  server:
+    route:
+      enabled: true #creates an openshift route to access Argo CD UI
+    autoscale:
+      enabled: false
+    grpc:
+      ingress:
+        enabled: false
+    ingress:
+      enabled: false
+    service:
+      type: ''
+```
 ### Repo
 TODO
 ### Redis
@@ -254,31 +269,92 @@ TODO
 ### Hing Availability
 TODO
 ### Create instance
-- Create the ArgoCD instance for the group a.
+- Create the ArgoCD instance for all groups.
 ```bash
 oc apply -f files/argocd-instance-namespace-scope.yaml
 ```
 
 ## ArgoCD projects
-TODO
+- Create project `group-a` and `group-b`, one for each group.
+- For each group we define the destinations. In this example only its namespace:
+```yaml
+spec:
+  destinations:
+    - namespace: group-a
+      server: https://kubernetes.default.svc 
+```
+- Define the roles and privileges for each project. In this example only for user that belongs to group-a.
+```yaml
+  roles:
+    - description: Group to developers to deploy on DEV environment
+      groups:
+        - group-a
+      name: developers
+      policies:
+        - >-
+          p, proj:group-a:developers, applications, get,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, create,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, update,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, delete,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, sync,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, override,
+          group-a/*, allow
+```
+
+- Finally we create the projects.
 ```bash
 oc apply -f files/argocd-projects.yaml
 ```
 ## Create ArgoCD applications to validate privileges
 
 ### Wrong namespace
-TODO
+- Error if we create applications in a namespace that is not configure in the project.
+```yaml
+spec:
+  destination:
+    namespace: group-b
+    server: 'https://kubernetes.default.svc'
+  project: group-a
+```
 ```bash
+oc login -u userA -p userA
 oc apply -f files/applications/application-example-wrong-namespace.yaml
 ```
 ### Wrong ArgoCD project
-TODO
+- Error if we create applications in a project that is not configure for this use.
+```yaml
+spec:
+  destination:
+    namespace: group-a
+    server: 'https://kubernetes.default.svc'
+  project: group-b
+```
 ```bash
+oc login -u userA -p userA
 oc apply -f files/applications/application-example-wrong-project.yaml
 ```
 ### Right configuration
-TODO
+- Successfully application creation in the right project and namespace.
+```yaml
+spec:
+  destination:
+    namespace: group-a
+    server: 'https://kubernetes.default.svc'
+  project: group-a
+```
+
 ```bash
+oc login -u userA -p userA
 oc apply -f files/applications/application-example.yaml
 ```
 ## ArgoCD Notifications
