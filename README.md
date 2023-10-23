@@ -2,17 +2,37 @@
 
 ## ArgoCD architecture
 TODO
+
+## Create namespaces
+
+- Namespaces for the workloads. As an administrative user, when you give Argo CD access to a namespace by using the `argocd.argoproj.io/managed-by`` label, it assumes namespace-admin privileges.
+```bash
+oc apply -f files/namespaces-for-workloads.yaml
+```
+
+- Useful documentation:
+  - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#deploy-resources-to-a-different-namespace-with-custom-role
+
+- Namespace for the ArgoCD instance.
+```bash
+oc apply -f files/namespaces-for-argocd-instance.yaml
+```
+
 ## Create users
 
-We need two users `userA` and `userB`. If you are using CodeReady Containers you can use this script
+We need two users `userA` and `userB`. 
 
+- If you are using CodeReady Containers you can use this script:
 ```bash
-./scripts/createUsers.sh
+./scripts/createUsersCRC.sh
+```
+
+- Else you can use this script:
+```bash
+./scripts/createUsersOCP.sh
 ```
 
 Then we create per each user:
-- Namespace for applications
-- Namespace for ArgoCD instance
 - Group
 - Role Binding for each user as admin to their namespace
 
@@ -69,15 +89,11 @@ oc apply -f files/openshift-gitops-subscription.yaml
   - https://developers.redhat.com/articles/2021/08/03/managing-gitops-control-planes-secure-gitops-practices
   - https://argocd-operator.readthedocs.io/en/latest/usage/ha/
 
-### Create namespaces for ArgoCD instances
-TODO
-```bash
-oc apply -f files/namespaces-for-argocd-instances.yaml
-```
-
 ## Create ArgoCD instance namespace-scope
 
 ### Configure RBAC namespace-scope
+
+TODO user admin en ocp no es admin
 
 - Create a ArgoCD role with no privileges and we set it as `defaultPolicy` 
 ```yaml
@@ -101,7 +117,8 @@ spec:
   rbac:
     policy: |-
       # Admin privileges to admin user
-      g, kubeadmin, role:admin
+      g, kubeadmin, role:admin # CRC Admin user
+      g, system:cluster-admins, role:admin
 ```
 
 - New ArgoCD role for each group with access to the cluster. Later in the ArgoCD project we will add privileges to the new roles.
@@ -152,7 +169,70 @@ You can log into the default Argo CD instance using the OpenShift users or kubea
 
 Seguir por aqui: https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#setting-up-a-new-argo-cd-instance
 
+### Configure resource quota/requests for OpenShift GitOps workloads
 
+- ArgoCD instance example:
+```yaml
+apiVersion: argoproj.io/v1beta1
+kind: ArgoCD
+metadata:
+  name: example
+spec:
+  server:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 125m
+        memory: 128Mi
+    route:
+      enabled: true
+  applicationSet:
+    resources:
+      limits:
+        cpu: '2'
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+  repo:
+    resources:
+      limits:
+        cpu: '1'
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+  sso:
+    dex:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+        requests:
+          cpu: 250m
+          memory: 128Mi
+  redis:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 256Mi
+      requests:
+        cpu: 250m
+        memory: 128Mi
+  controller:
+    resources:
+      limits:
+        cpu: '2'
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 1Gi
+```
+
+- Useful documentation:
+  - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#in-built-permissions-for-cluster-configuration
 ### Controller
 TODO
 ### Server
@@ -176,23 +256,35 @@ TODO
 ### Create instance
 - Create the ArgoCD instance for the group a.
 ```bash
-oc apply -f files/argocd-instance-group-a.yaml
+oc apply -f files/argocd-instance-namespace-scope.yaml
 ```
-- Create the ArgoCD instance for the group b.
-```bash
-oc apply -f files/argocd-instance-group-b.yaml
-```
+
 ## ArgoCD projects
 TODO
-### Create namespaces for applications
-TODO
-argocd.argoproj.io/managed-by
 ```bash
-oc apply -f files/namespaces-for-workloads.yaml
+oc apply -f files/argocd-projects.yaml
 ```
-### Create ArgoCD applications to validate privileges
+## Create ArgoCD applications to validate privileges
+
+### Wrong namespace
 TODO
+```bash
+oc apply -f files/applications/application-example-wrong-namespace.yaml
+```
+### Wrong ArgoCD project
+TODO
+```bash
+oc apply -f files/applications/application-example-wrong-project.yaml
+```
+### Right configuration
+TODO
+```bash
+oc apply -f files/applications/application-example.yaml
+```
 ## ArgoCD Notifications
 TODO
 ## ArgoCD Monitoring
 TODO
+
+- Useful documentation:
+  - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#monitoring

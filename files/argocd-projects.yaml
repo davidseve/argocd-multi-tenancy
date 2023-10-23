@@ -1,0 +1,82 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: group-a
+  namespace: argocd-instance
+spec:
+  description: group-a 
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: group-a
+      server: https://kubernetes.default.svc 
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - description: Group to developers to deploy on DEV environment
+      groups:
+        - group-a
+      name: developers
+      policies:
+        - >-
+          p, proj:group-a:developers, applications, get,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, create,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, update,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, delete,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, sync,
+          group-a/*, allow
+        - >-
+          p, proj:group-a:developers, applications, override,
+          group-a/*, allow
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: group-b
+  namespace: argocd-instance
+spec:
+  description: group-b 
+  sourceRepos:
+    - '*'
+  destinations:
+    - namespace: group-b
+      server: https://kubernetes.default.svc 
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  roles:
+    - description: Group to developers to deploy on DEV environment
+      groups:
+        - group-b
+      name: developers
+      policies:
+        - >-
+          p, proj:group-b:developers, applications, get,
+          group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applications, create,
+          group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applications, update,
+          group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applications, delete,
+          group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applications, sync,
+          group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applications, override,
+          group-b/*, allow
+---
+

@@ -2,8 +2,8 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
-  name: openshift-group-a
-  namespace: gitops-group-a
+  name: argocd
+  namespace: argocd-instance
 spec:
   rbac:
     defaultPolicy: 'role:none'
@@ -18,7 +18,8 @@ spec:
       p, role:none, gpgkeys, get, *, deny
 
       # Admin privileges to admin user
-      g, kubeadmin, role:admin
+      g, kubeadmin, role:admin # CRC Admin user
+      g, system:cluster-admins, role:admin
 
       #Privileges at project level
       g, group-a, role:group-a

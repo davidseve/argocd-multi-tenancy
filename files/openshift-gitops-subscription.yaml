@@ -25,5 +25,5 @@ spec:
   #     value: argocd-cluster-scope
   #   - name: DISABLE_DEFAULT_ARGOCD_CONSOLELINK
   #     value: 'true'
-  # ha:
-  #   enabled: true
+  ha:
+    enabled: true

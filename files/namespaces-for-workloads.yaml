@@ -3,8 +3,8 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: group-a
-  label: 
-    argocd.argoproj.io/managed-by: gitops-group-a
+  labels: 
+    argocd.argoproj.io/managed-by: argocd-instance
 spec:
   finalizers:
   - kubernetes
@@ -12,95 +12,10 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: gitops-group-a
+  name: group-b
+  labels: 
+    argocd.argoproj.io/managed-by: argocd-instance
 spec:
   finalizers:
   - kubernetes
----
-kind: Group
-apiVersion: user.openshift.io/v1
-metadata:
-  name: group-a
-users:
- - userA
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: group-a-gitops-user-role-binding
-  namespace: group-a
-subjects:
-- kind: Group
-  name: group-a
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: admin
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: group-a-gitops-user-role-binding
-  namespace: gitops-group-a
-subjects:
-- kind: Group
-  name: group-a
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: admin
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: group-b
-  label: argocd.argoproj.io/managed-by=gitops-group-b
-spec:
-  finalizers:
-  - kubernetes
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gitops-group-b
-spec:
-  finalizers:
-  - kubernetes
----
-kind: Group
-apiVersion: user.openshift.io/v1
-metadata:
-  name: group-b
-users:
- - userB
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: group-b-gitops-user-role-binding
-  namespace: group-b
-subjects:
-- kind: Group
-  name: group-b
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: admin
-  apiGroup: rbac.authorization.k8s.io
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: group-b-gitops-user-role-binding
-  namespace: gitops-group-b
-subjects:
-- kind: Group
-  name: group-b
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: admin
-  apiGroup: rbac.authorization.k8s.io
 ---
