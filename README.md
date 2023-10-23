@@ -359,6 +359,9 @@ oc apply -f files/applications/application-example.yaml
 ```
 ## ArgoCD Notifications
 TODO
+
+- Useful documentation:
+  - https://argocd-notifications.readthedocs.io/en/stable/
 ## ArgoCD Monitoring
 TODO
 
