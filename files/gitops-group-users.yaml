@@ -1,16 +1,4 @@
 ---
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: gitops-user-role
-rules:
-- apiGroups:
-  - argoproj.io
-  resources:
-  - 'applications'
-  verbs:
-  - '*'
----
 kind: Group
 apiVersion: user.openshift.io/v1
 metadata:
@@ -32,20 +20,6 @@ roleRef:
   name: admin
   apiGroup: rbac.authorization.k8s.io
 ---
-# apiVersion: rbac.authorization.k8s.io/v1
-# kind: ClusterRoleBinding
-# metadata:
-#   name: group-a-gitops-user-role-binding
-#   namespace: argocd-instance
-# subjects:
-# - kind: Group
-#   name: group-a
-#   apiGroup: rbac.authorization.k8s.io
-# roleRef:
-#   kind: ClusterRole
-#   name: gitops-user-role
-#   apiGroup: rbac.authorization.k8s.io
-# ---
 kind: Group
 apiVersion: user.openshift.io/v1
 metadata:
@@ -67,17 +41,3 @@ roleRef:
   name: admin
   apiGroup: rbac.authorization.k8s.io
 ---
-# apiVersion: rbac.authorization.k8s.io/v1
-# kind: ClusterRoleBinding
-# metadata:
-#   name: group-b-gitops-user-role-binding
-#   namespace: argocd-instance
-# subjects:
-# - kind: Group
-#   name: group-b
-#   apiGroup: rbac.authorization.k8s.io
-# roleRef:
-#   kind: ClusterRole
-#   name: gitops-user-role
-#   apiGroup: rbac.authorization.k8s.io
-# ---
