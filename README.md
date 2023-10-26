@@ -1,8 +1,5 @@
 # ArgoCD multi-tenancy example
 
-## ArgoCD architecture
-TODO
-
 ## Create namespaces
 
 - Namespaces for the workloads. As an administrative user, when you give Argo CD access to a namespace by using the `argocd.argoproj.io/managed-by`` label, it assumes namespace-admin privileges.
@@ -108,7 +105,6 @@ spec:
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
 ```
-TODO user admin en ocp no es admin
 
 - Configure our admin user with admin role
 ```yaml

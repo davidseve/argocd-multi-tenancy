@@ -25,6 +25,9 @@ spec:
       g, group-a, role:group-a
       p, role:group-a, clusters, get, https://kubernetes.default.svc, allow
 
+      g, group-b, role:group-b
+      p, role:group-b, clusters, get, https://kubernetes.default.svc, allow
+
     scopes: '[groups,name]'
 
   server:

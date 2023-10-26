@@ -1,0 +1,10 @@
+# OperatorGroup resource for ArgoCD
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: argocd-instance
+  namespace: argocd-instance
+spec:
+  targetNamespaces:
+  - argocd-instance
