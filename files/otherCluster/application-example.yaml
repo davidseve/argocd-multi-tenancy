@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-a-other-cluster
+  namespace: openshift-gitops
+spec:
+  destination:
+    namespace: group-a
+    server: 'https://api.cluster-f28kd.f28kd.sandboxXXX.opentlc.com:6443'
+  project: default
+  source:
+    helm:
+      parameters:
+        - name: build.enabled
+          value: "false"
+        - name: deploy.route.tls.enabled
+          value: "true"
+        - name: image.name
+          value: quay.io/redhatworkshops/gitops-helm-quarkus
+    chart: quarkus
+    repoURL: https://redhat-developer.github.io/redhat-helm-charts
+    targetRevision: 0.0.3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
