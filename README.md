@@ -85,6 +85,8 @@ oc apply -f files/openshift-gitops-subscription.yaml
   - https://docs.openshift.com/gitops/1.9/declarative_clusterconfig/configuring-an-openshift-cluster-by-deploying-an-application-with-cluster-configurations.html 
   - https://developers.redhat.com/articles/2021/08/03/managing-gitops-control-planes-secure-gitops-practices
   - https://argocd-operator.readthedocs.io/en/latest/usage/ha/
+  - https://docs.openshift.com/gitops/1.10/argocd_instance/argo-cd-cr-component-properties.html#argo-cd-properties_argo-cd-cr-component-properties
+
 
 ## Create ArgoCD instance namespace-scope
 
@@ -149,22 +151,12 @@ You can log into the default Argo CD instance using the OpenShift users or kubea
   sso:
     dex:
       openShiftOAuth: true
-      resources:
-        limits:
-          cpu: 500m
-          memory: 256Mi
-        requests:
-          cpu: 250m
-          memory: 128Mi
     provider: dex
 ```
 - Useful documentation:
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#working-with-dex
 
 
-Seguir por aqui: https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#setting-up-a-new-argo-cd-instance
-
-https://docs.openshift.com/gitops/1.10/argocd_instance/argo-cd-cr-component-properties.html#argo-cd-properties_argo-cd-cr-component-properties
 
 ### Configure resource quota/requests for OpenShift GitOps workloads
 
@@ -230,40 +222,7 @@ spec:
 
 - Useful documentation:
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#in-built-permissions-for-cluster-configuration
-### Controller
-TODO
-### Server
-TODO
-```yaml
-  server:
-    route:
-      enabled: true #creates an openshift route to access Argo CD UI
-    autoscale:
-      enabled: false
-    grpc:
-      ingress:
-        enabled: false
-    ingress:
-      enabled: false
-    service:
-      type: ''
-```
-### Repo
-TODO
-### Redis
-TODO
-### Grafana
-TODO
-### Monitoring
-TODO
-### Prometheus
-TODO
-### Applications Set
-TODO
-### Resource Health Check
-TODO
-### Hing Availability
-TODO
+
 ### Create instance
 - Create the ArgoCD instance for all groups.
 ```bash
@@ -353,8 +312,29 @@ spec:
 oc login -u userA -p userA
 oc apply -f files/applications/application-example.yaml
 ```
-## ArgoCD Notifications
-TODO
+
+## Applications in any namespace
+When this documentation is done this feature is in Beta state.
+Here we have the official documentation and the current status: 
+https://argo-cd.readthedocs.io/en/stable/operator-manual/app-any-namespace/
+
+We have to take into account that Applications in any namespace needs Cluster-scoped Argo CD installation.
+
+There is already an issue to promote to stable this feature: https://github.com/argoproj/argo-cd/issues/16189
+
+We have to take into account that there is a different feature to support ApplicationSet in any namespace.
+
+## ApplicationSet in any namespace
+
+When this documentation is done this feature is in Beta state.
+Here we have the official documentation and the current status: 
+https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Appset-Any-Namespace/
+
+We have to take into account that ApplicationSet in any namespace needs Cluster-scoped Argo CD installation.
+
+We have to take into account that this feature work in combination Applications with  in any namespace.
+
+
 
 - Useful documentation:
   - https://argocd-notifications.readthedocs.io/en/stable/
@@ -363,3 +343,6 @@ TODO
 
 - Useful documentation:
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#monitoring
+
+## How to configure ArgoCD at scale
+https://aws.amazon.com/es/blogs/opensource/argo-cd-application-controller-scalability-testing-on-amazon-eks/

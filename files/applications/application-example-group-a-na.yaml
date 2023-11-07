@@ -1,11 +1,13 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: group-a-wrong-project
-  namespace: argocd-instance
+  name: application-a-na
+  namespace: group-a-na
 spec:
-  project: group-b
+  destination:
+    namespace: group-a-na
+    server: 'https://kubernetes.default.svc'
+  project: group-a-p
   source:
     helm:
       parameters:
@@ -18,9 +20,6 @@ spec:
     chart: quarkus
     repoURL: https://redhat-developer.github.io/redhat-helm-charts
     targetRevision: 0.0.3
-  destination:
-    server: 'https://kubernetes.default.svc'
-    namespace: group-a-na
   syncPolicy:
     automated:
       prune: true

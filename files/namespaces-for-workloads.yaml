@@ -19,3 +19,13 @@ spec:
   finalizers:
   - kubernetes
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: group-a-na
+  labels: 
+    argocd.argoproj.io/managed-by: argocd-instance
+spec:
+  finalizers:
+  - kubernetes
+---

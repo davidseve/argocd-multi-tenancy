@@ -5,9 +5,9 @@ metadata:
   namespace: argocd-instance
 spec:
   destination:
-    namespace: group-a
+    namespace: group-a-na
     server: 'https://kubernetes.default.svc'
-  project: group-a
+  project: group-a-p
   source:
     helm:
       parameters:

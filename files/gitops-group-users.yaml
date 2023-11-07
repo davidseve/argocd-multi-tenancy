@@ -2,6 +2,16 @@
 kind: Group
 apiVersion: user.openshift.io/v1
 metadata:
+  name: group-all
+users:
+ - userA
+ - userA-view
+ - userB
+ - userC
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
   name: group-a
 users:
  - userA
@@ -19,6 +29,13 @@ roleRef:
   kind: ClusterRole
   name: admin
   apiGroup: rbac.authorization.k8s.io
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
+  name: group-a-view
+users:
+ - userA-view
 ---
 kind: Group
 apiVersion: user.openshift.io/v1

@@ -25,5 +25,7 @@ spec:
       value: argocd-cluster-scope
     - name: DISABLE_DEFAULT_ARGOCD_CONSOLELINK
       value: 'true'
+    - name: CONTROLLER_CLUSTER_ROLE
+      value: argocd-application-controller-custom
   ha:
     enabled: true

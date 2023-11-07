@@ -10,26 +10,73 @@ spec:
     policy: |-
       # Default policy with no privileges
       p, role:none, applications, get, */*, deny
+      p, role:none, applicationsets, get, */*, deny
       p, role:none, certificates, get, *, deny
-      p, role:none, clusters, get, *, deny
       p, role:none, repositories, get, *, deny
       p, role:none, projects, get, *, deny
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
+      p, role:none, logs, get, *, deny
+      p, role:none, execs, get, *, deny
+      p, role:none, extensions, get, *, deny
 
       # Admin privileges to admin user
       g, kubeadmin, role:admin
       g, system:cluster-admins, role:admin
 
+
       #Privileges at project level
-      g, group-a, role:group-a
-      p, role:group-a, clusters, get, https://kubernetes.default.svc, allow
+      
+      p, role:clusters-get, clusters, get, https://kubernetes.default.svc, allow
+      g, group-all, role:clusters-get
 
-      g, group-b, role:group-b
-      p, role:group-b, clusters, get, https://kubernetes.default.svc, allow
-
-    scopes: '[groups,name]'
-
+    scopes: '[groups,name]'  
+  # resourceInclusions: |
+  #   - apiGroups:
+  #     - ""
+  #     - "batch"
+  #     - "apps"
+  #     - "route.openshift.io"
+  #     kinds:
+  #     - ConfigMap
+  #     - Endpoints
+  #     - LimitRange
+  #     - Namespace
+  #     - PersistentVolumeClaim
+  #     - PersistentVolume
+  #     - Pod
+  #     - PodTemplate
+  #     - ReplicationController
+  #     - ResourceQuota
+  #     - ServiceAccount
+  #     - Service
+  #     - Deployment
+  #     - Secrets
+  #     clusters:
+  #     - "*"
+  #   - apiGroups:
+  #     - "argoproj.io"
+  #     kinds:
+  #     - "*"
+  #     clusters:
+  #     - "*"
+  # resourceExclusions example
+  # resourceExclusions: |
+  #   - apiGroups:
+  #     - network.openshift.io
+  #     - networking.k8s.io
+  #     clusters:
+  #     - '*'
+  #     kinds:
+  #     - '*'
+  #   - apiGroups:
+  #     - ""
+  #     clusters:
+  #     - '*'
+  #     kinds:
+  #     - LimitRange
+  #     - ResourceQuota
+      
   server:
     route:
       enabled: true #creates an openshift route to access Argo CD UI
@@ -74,6 +121,8 @@ spec:
       enabled: false
   sso:
     dex:
+      groups:
+        - "group-all"
       openShiftOAuth: true
       resources:
         limits:
