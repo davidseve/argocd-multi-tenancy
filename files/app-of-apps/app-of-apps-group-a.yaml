@@ -11,6 +11,7 @@ spec:
   source:
     repoURL: https://github.com/davidseve/argocd-multi-tenancy.git
     path: files/applications
+    targetRevision: argocdinstance
   syncPolicy:
     automated:
       prune: true

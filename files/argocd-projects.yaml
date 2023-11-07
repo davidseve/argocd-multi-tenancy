@@ -24,11 +24,11 @@ spec:
       policies:
         # all
         - >-
-          p, proj:group-a-p:admin, applicationsets, *, group-a-p/group-a*, allow
+          p, proj:group-a-p:admin, applicationsets, *, group-a-p/*, allow
         - >-
-          p, proj:group-a-p:admin, applications, *, group-a-p/group-a*, allow
+          p, proj:group-a-p:admin, applications, *, group-a-p/*, allow
         - >-
-          p, proj:group-a-p:admin, repositories, *, group-a-p/group-a*, allow
+          p, proj:group-a-p:admin, repositories, *, group-a-p/*, allow
         - >-
           g, userC, proj:group-a-p:developers
     - description: Group to viewers
