@@ -1,4 +1,4 @@
-# ArgoCD multi-tenancy example
+# ArgoCD multi-tenancy user deploy in forbidden namespace
 
 ## Create namespaces
 
