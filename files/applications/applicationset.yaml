@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prepla-gitops-apps
+  namespace: openshift-gitops
+spec:
+  generators:
+    - merge:
+        mergeKeys:
+          - cluster.alias
+        generators:
+          - git:
+              repoURL: ssh://git@tehrhac2.mgmt.dc.es.telefonica:7999/aocp/te-acm-bootstrap.git
+              revision: master
+              files:
+              - path: "cluster-definition/**/cluster.json"
+          - list:
+            elements:
+            - cluster:
+                alias: prepla
+              temas:
+                - ../../clusters/OCP-JC-TE-V4-PREPLA/values-OCP-JC-TE-V4-PREPLA.yaml
+                - ../../teams/values-dmdw.yaml 
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+  template:
+    metadata:
+      name: '{{cluster.alias}}-gitops-apps'
+      labels:
+        app-config: gitops-apps
+    spec:
+      project: prepla-components
+      source:
+        path: charts/telefonica-gitops-apps
+        repoURL: ssh://git@tehrhac2.mgmt.dc.es.telefonica:7999/aocp/telefonica-gitops-app.git
+        targetRevision: master
+        helm:
+          valueFiles: |-
+          {{teams}}
+      destination:
+        namespace: gitops-apps
+        server: '{{cluster.address}}'
+      syncPolicy:
+          automated:
+            prune: true
+            selfHeal: true
+      revisionHistoryLimit: 5
