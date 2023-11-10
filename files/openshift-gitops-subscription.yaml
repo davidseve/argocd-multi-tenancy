@@ -21,11 +21,5 @@ spec:
     env:
     - name: DISABLE_DEFAULT_ARGOCD_INSTANCE
       value: "true"
-    - name: ARGOCD_CLUSTER_CONFIG_NAMESPACES
-      value: argocd-cluster-scope
-    - name: DISABLE_DEFAULT_ARGOCD_CONSOLELINK
-      value: 'true'
-    - name: CONTROLLER_CLUSTER_ROLE
-      value: argocd-application-controller-custom
   ha:
     enabled: true

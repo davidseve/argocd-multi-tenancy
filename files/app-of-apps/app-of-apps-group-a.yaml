@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/davidseve/argocd-multi-tenancy.git
     path: files/applications
-    targetRevision: argocdinstance
+    targetRevision: deploy-in-forbidden-namespace
   syncPolicy:
     automated:
       prune: true
