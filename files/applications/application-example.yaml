@@ -20,3 +20,7 @@ spec:
     chart: quarkus
     repoURL: https://redhat-developer.github.io/redhat-helm-charts
     targetRevision: 0.0.3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
