@@ -5,7 +5,7 @@ metadata:
   name: group-a-wrong-project-namespace
   namespace: argocd-instance
 spec:
-  project: group-b
+  project: group-b-p
   source:
     helm:
       parameters:

@@ -6,6 +6,7 @@ metadata:
 users:
  - userA
  - userB
+ - kubeadmin
 ---
 kind: Group
 apiVersion: user.openshift.io/v1
