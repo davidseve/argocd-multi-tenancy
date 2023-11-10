@@ -98,7 +98,7 @@ oc apply -f files/argocd-projects.yaml
 ```
 ## Create ArgoCD appofapps to validate privileges
 
-Create the appOfApps in the user with the userA
+Create the appOfApps in the UI with the userA
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -119,5 +119,23 @@ spec:
     automated:
       prune: true
       selfHeal: true
+```
+
+We will see that the `group-a-wrong-project-namespac` is synced.
+
+```bash
+oc get apps -n argocd-instance
+NAME                              SYNC STATUS   HEALTH STATUS
+group-a-app                       Synced        Healthy
+group-a-app-of-apps               Synced        Healthy
+group-a-wrong-project-namespace   Synced        Healthy
+```
+
+And the pod is running
+
+```bash
+oc get pods -n group-b-namespace
+NAME                                              READY   STATUS    RESTARTS   AGE
+group-a-wrong-project-namespace-9f6bff8c9-tw52h   1/1     Running   0          3m25s
 ```
 
