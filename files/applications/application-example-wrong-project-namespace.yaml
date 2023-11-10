@@ -20,7 +20,7 @@ spec:
     targetRevision: 0.0.3
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: group-b
+    namespace: group-b-namespace
   syncPolicy:
     automated:
       prune: true
