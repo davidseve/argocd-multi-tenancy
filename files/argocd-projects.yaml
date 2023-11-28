@@ -42,6 +42,8 @@ spec:
   destinations:
     - namespace: group-b-namespace
       server: https://kubernetes.default.svc 
+    - namespace: argocd-instance
+      server: https://kubernetes.default.svc 
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -49,7 +51,7 @@ spec:
     - description: Group to developers to deploy on DEV environment
       groups:
         - group-b
-      name: developers
+      name: admin
       policies:
         # all
         - >-
