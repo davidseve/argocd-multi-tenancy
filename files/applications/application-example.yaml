@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: group-a-app
-  namespace: argocd-instance
+  namespace: group-a-na
 spec:
   destination:
     namespace: group-a-na
@@ -20,3 +20,7 @@ spec:
     chart: quarkus
     repoURL: https://redhat-developer.github.io/redhat-helm-charts
     targetRevision: 0.0.3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -3,9 +3,9 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: group-a-wrong-project-namespace
-  namespace: argocd-instance
+  namespace: group-a-na
 spec:
-  project: group-b
+  project: group-b-p
   source:
     helm:
       parameters:
@@ -20,7 +20,7 @@ spec:
     targetRevision: 0.0.3
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: group-b
+    namespace: group-b-na
   syncPolicy:
     automated:
       prune: true

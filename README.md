@@ -1,5 +1,28 @@
 # ArgoCD multi-tenancy example
 
+To achieve a multi-tenancy architecture it is very useful to use Applications in any namespace
+
+## Applications in any namespace
+When this documentation is done this feature is in Beta state.
+Here we have the official documentation and the current status: 
+https://argo-cd.readthedocs.io/en/stable/operator-manual/app-any-namespace/
+
+We have to take into account that Applications in any namespace needs Cluster-scoped Argo CD installation.
+
+There is already an issue to promote to stable this feature: https://github.com/argoproj/argo-cd/issues/16189
+
+We have to take into account that there is a different feature to support ApplicationSet in any namespace.
+
+## ApplicationSet in any namespace
+
+When this documentation is done this feature is in Beta state.
+Here we have the official documentation and the current status: 
+https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Appset-Any-Namespace/
+
+We have to take into account that ApplicationSet in any namespace needs Cluster-scoped Argo CD installation.
+
+We have to take into account that this feature work in combination Applications with  in any namespace.
+
 ## Create namespaces
 
 - Namespaces for the workloads. As an administrative user, when you give Argo CD access to a namespace by using the `argocd.argoproj.io/managed-by`` label, it assumes namespace-admin privileges.
@@ -87,10 +110,9 @@ oc apply -f files/openshift-gitops-subscription.yaml
   - https://argocd-operator.readthedocs.io/en/latest/usage/ha/
   - https://docs.openshift.com/gitops/1.10/argocd_instance/argo-cd-cr-component-properties.html#argo-cd-properties_argo-cd-cr-component-properties
 
+## Create ArgoCD instance cluster-scope
 
-## Create ArgoCD instance namespace-scope
-
-### Configure RBAC namespace-scope
+### Configure RBAC cluster-scope
 
 - Create a ArgoCD role with no privileges and we set it as `defaultPolicy` 
 ```yaml
@@ -115,7 +137,6 @@ spec:
     policy: |-
       # Admin privileges to admin user
       g, kubeadmin, role:admin # CRC Admin user
-      g, system:cluster-admins, role:admin
 ```
 
 - New ArgoCD role for each group with access to the cluster. Later in the ArgoCD project we will add privileges to the new roles.
@@ -124,12 +145,8 @@ spec:
 spec:
   rbac:
     policy: |-
-      #Privileges at project level
-      g, group-a, role:group-a
-      p, role:group-a, clusters, get, https://kubernetes.default.svc, allow
-
-      g, group-b, role:group-b
-      p, role:group-b, clusters, get, https://kubernetes.default.svc, allow
+      p, role:clusters-get, clusters, get, https://kubernetes.default.svc, allow
+      g, group-all, role:clusters-get
 
 ```
 
@@ -150,6 +167,8 @@ You can log into the default Argo CD instance using the OpenShift users or kubea
 ```yaml
   sso:
     dex:
+      groups:
+        - "group-all"
       openShiftOAuth: true
     provider: dex
 ```
@@ -226,16 +245,16 @@ spec:
 ### Create instance
 - Create the ArgoCD instance for all groups.
 ```bash
-oc apply -f files/argocd-instance-namespace-scope.yaml
+oc apply -f files/argocd-instance-cluster.yaml
 ```
 
 ## ArgoCD projects
-- Create project `group-a` and `group-b`, one for each group.
+- Create project `group-a-p` and `group-b-p`, one for each group.
 - For each group we define the destinations. In this example only its namespace:
 ```yaml
 spec:
   destinations:
-    - namespace: group-a
+    - namespace: group-a-na
       server: https://kubernetes.default.svc 
 ```
 - Define the roles and privileges for each project. In this example only for user that belongs to group-a.
@@ -247,22 +266,22 @@ spec:
       name: developers
       policies:
         - >-
-          p, proj:group-a:developers, applications, get,
+          p, proj:group-a-p:developers, applications, get,
           group-a/*, allow
         - >-
-          p, proj:group-a:developers, applications, create,
+          p, proj:group-a-p:developers, applications, create,
           group-a/*, allow
         - >-
-          p, proj:group-a:developers, applications, update,
+          p, proj:group-a-p:developers, applications, update,
           group-a/*, allow
         - >-
-          p, proj:group-a:developers, applications, delete,
+          p, proj:group-a-p:developers, applications, delete,
           group-a/*, allow
         - >-
-          p, proj:group-a:developers, applications, sync,
+          p, proj:group-a-p:developers, applications, sync,
           group-a/*, allow
         - >-
-          p, proj:group-a:developers, applications, override,
+          p, proj:group-a-p:developers, applications, override,
           group-a/*, allow
 ```
 
@@ -275,11 +294,10 @@ oc apply -f files/argocd-projects.yaml
 ### Wrong namespace
 - Error if we create applications in a namespace that is not configure in the project.
 ```yaml
-spec:
-  destination:
-    namespace: group-b
-    server: 'https://kubernetes.default.svc'
-  project: group-a
+kind: Application
+metadata:
+  name: group-a-wrong-namespace
+  namespace: argocd-instance
 ```
 ```bash
 oc login -u userA -p userA
@@ -290,22 +308,24 @@ oc apply -f files/applications/application-example-wrong-namespace.yaml
 ```yaml
 spec:
   destination:
-    namespace: group-a
+    namespace: group-a-na
     server: 'https://kubernetes.default.svc'
-  project: group-b
+  project: group-b-p
 ```
 ```bash
 oc login -u userA -p userA
 oc apply -f files/applications/application-example-wrong-project.yaml
 ```
+Error message: application 'group-a-wrong-project' in namespace 'group-a-na' is not permitted to use project 'group-b-p'
+
 ### Right configuration
 - Successfully application creation in the right project and namespace.
 ```yaml
 spec:
   destination:
-    namespace: group-a
+    namespace: group-a-na
     server: 'https://kubernetes.default.svc'
-  project: group-a
+  project: group-a-p
 ```
 
 ```bash
@@ -313,33 +333,10 @@ oc login -u userA -p userA
 oc apply -f files/applications/application-example.yaml
 ```
 
-## Applications in any namespace
-When this documentation is done this feature is in Beta state.
-Here we have the official documentation and the current status: 
-https://argo-cd.readthedocs.io/en/stable/operator-manual/app-any-namespace/
-
-We have to take into account that Applications in any namespace needs Cluster-scoped Argo CD installation.
-
-There is already an issue to promote to stable this feature: https://github.com/argoproj/argo-cd/issues/16189
-
-We have to take into account that there is a different feature to support ApplicationSet in any namespace.
-
-## ApplicationSet in any namespace
-
-When this documentation is done this feature is in Beta state.
-Here we have the official documentation and the current status: 
-https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Appset-Any-Namespace/
-
-We have to take into account that ApplicationSet in any namespace needs Cluster-scoped Argo CD installation.
-
-We have to take into account that this feature work in combination Applications with  in any namespace.
-
-
 
 - Useful documentation:
   - https://argocd-notifications.readthedocs.io/en/stable/
 ## ArgoCD Monitoring
-TODO
 
 - Useful documentation:
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#monitoring

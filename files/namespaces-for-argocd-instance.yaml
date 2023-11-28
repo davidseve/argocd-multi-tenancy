@@ -1,9 +1,7 @@
----
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: argocd-instance
+  name: argocd-cluster-scope
 spec:
   finalizers:
   - kubernetes
----
