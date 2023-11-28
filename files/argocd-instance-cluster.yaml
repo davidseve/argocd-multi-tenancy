@@ -1,34 +1,36 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: argocd-cluster-scope-applications
-  label: 
-    argocd.argoproj.io/managed-by: argocd-cluster-scope
-spec:
-  finalizers:
-  - kubernetes
----
 apiVersion: argoproj.io/v1alpha1
 kind: ArgoCD
 metadata:
-  name: openshift-gitops
+  name: argocd-cluster
   namespace: argocd-cluster-scope
 spec:
   rbac:
     defaultPolicy: 'role:none'
     policy: |-
-      # Access Control TODO que pasa si no meto esto
+      # Default policy with no privileges
       p, role:none, applications, get, */*, deny
+      p, role:none, applicationsets, get, */*, deny
       p, role:none, certificates, get, *, deny
-      p, role:none, clusters, get, *, deny
       p, role:none, repositories, get, *, deny
       p, role:none, projects, get, *, deny
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
+      p, role:none, logs, get, *, deny
+      p, role:none, execs, get, *, deny
+      p, role:none, extensions, get, *, deny
 
+      # Admin privileges to admin user
       g, kubeadmin, role:admin
-    scopes: '[groups,name]'
 
+      #Privileges at project level
+      
+      p, role:clusters-get, clusters, get, https://kubernetes.default.svc, allow
+      g, group-all, role:clusters-get
+
+    scopes: '[groups,name]'
+  sourceNamespaces:
+    - group-a-na 
+    - group-b-na
   resourceHealthChecks:
     - group: operators.coreos.com
       kind: Subscription
@@ -128,6 +130,8 @@ spec:
       enabled: false
   sso:
     dex:
+      groups:
+        - "group-all"
       openShiftOAuth: true
       resources:
         limits:

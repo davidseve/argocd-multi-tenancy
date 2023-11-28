@@ -1,0 +1,58 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: argocd-application-controller-custom
+  namespace: argocd-instance
+rules:
+- apiGroups:
+  - argoproj.io
+  resources:
+  - '*'
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+  - list
+  - watch
+  - create
+## Update native resources
+- apiGroups:
+  # k8s.io
+  - ""
+  - apps
+  - networking.k8s.io
+  - batch
+  - autoscaling
+  # openshift.io
+  - apps.openshift.io
+  - build.openshift.io
+  - project.openshift.io
+  - route.openshift.io
+  - image.openshift.io
+  - monitoring.coreos.com
+  resources:
+  - '*'
+  verbs:
+  - delete
+  - get
+  - patch
+  - update
+  - list
+  - watch
+  - create
+## View all
+- apiGroups:
+  - '*'
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+  - watch
+## Del original pendiente de ver que significa
+- nonResourceURLs:
+  - '*'
+  verbs:
+  - get
+  - list

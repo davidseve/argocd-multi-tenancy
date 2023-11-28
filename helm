@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: argocd-test
+  name: argocd-test
+  namespace: cicd-inte-frt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: argocd-test
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: argocd-test
+    spec:
+      containers:
+      - image: quay.apps.ocgc4tools.mgmt.dc.es.telefonica/cicd/web-pau1:1.0.0
+        name: web-pau1
+        resources: {}
+      imagePullS
+imagePullSecrets:
+      - name: quay-pullsecret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: quay-pullsecret
+  namespace: cicd-inte-frt
+data:
+  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJxdWF5LmFwcHMub2NnYzR0b29scy5tZ210LmRjLmVzLnRlbGVmb25pY2EvY2ljZCI6IHsKICAgICAgImF1dGgiOiAiWTJsalpDdHdkV3hzWlhJNlMxRlJSVVU0TlV0VFJsTllXbFphU2tJMVNVMDVRbFphVVROTFdsUTFSRWRMVFRnMFZqRXhORGxLV0RrM1FsRmFUMGc0VFRSTFdEWTVNVWxKV1ZNd09RPT0iLAogICAgICAiZW1haWwiOiAiIgogICAgfQogIH0KfQo=
+type: kubernetes.io/dockerconfigjson

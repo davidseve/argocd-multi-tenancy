@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: application-a
-  namespace: argocd-instance
+  name: group-a-app
+  namespace: group-a-na
 spec:
   destination:
-    namespace: group-a
+    namespace: group-a-na
     server: 'https://kubernetes.default.svc'
-  project: group-a
+  project: group-a-p
   source:
     helm:
       parameters:

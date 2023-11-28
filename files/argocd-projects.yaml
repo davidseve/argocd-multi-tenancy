@@ -2,54 +2,103 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: group-a
-  namespace: argocd-instance
+  name: group-a-p
+  namespace: argocd-cluster-scope
 spec:
   description: group-a 
   sourceRepos:
     - '*'
+  sourceNamespaces:
+    - group-a-na
   destinations:
-    - namespace: group-a
+    - namespace: group-a-na
       server: https://kubernetes.default.svc 
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
   roles:
-    - description: Group to developers to deploy on DEV environment
+    - description: Group to admins to deploy
       groups:
         - group-a
+      name: admin
+      policies:
+        # all
+        - >-
+          p, proj:group-a-p:admin, applicationsets, *, group-a-p/*, allow
+        - >-
+          p, proj:group-a-p:admin, applications, *, group-a-p/*, allow
+        - >-
+          p, proj:group-a-p:admin, repositories, *, group-a-p/*, allow
+        - >-
+          g, userC, proj:group-a-p:developers
+    - description: Group to viewers
+      groups:
+        - group-a-view
+      name: viewers
+      policies:
+        # get
+        - >-
+          p, proj:group-a-p:viewers, applicationsets, get, group-a-p/*, allow
+        - >-
+          p, proj:group-a-p:viewers, applications, get,
+          group-a-p/*, allow
+        - >-
+          p, proj:group-a-p:viewers, repositories, get,
+          group-a-p/*, allow
+        # logs
+        - >-
+          p, proj:group-a-p:developers, logs, get,
+          group-a-p/*, deny
+ 
+    - description: Group to developers
+      groups:
+        - group-a-devs
       name: developers
       policies:
+        # copy permissions from viewers
         - >-
-          p, proj:group-a:developers, applications, get,
-          group-a/*, allow
+          g, proj:group-a-p:developers, proj:group-a-p:viewers
+        # sync
         - >-
-          p, proj:group-a:developers, applications, create,
-          group-a/*, allow
+          p, proj:group-a-p:developers, applicationsets, sync, group-a-p/*, allow
         - >-
-          p, proj:group-a:developers, applications, update,
-          group-a/*, allow
+          p, proj:group-a-p:developers, applications, sync,
+          group-a-p/*, allow
+        # update
         - >-
-          p, proj:group-a:developers, applications, delete,
-          group-a/*, allow
+          p, proj:group-a-p:developers, applicationsets, update, group-a-p/*, allow
         - >-
-          p, proj:group-a:developers, applications, sync,
-          group-a/*, allow
+          p, proj:group-a-p:developers, applications, update,
+          group-a-p/*, allow
+        # logs
         - >-
-          p, proj:group-a:developers, applications, override,
-          group-a/*, allow
+          p, proj:group-a-p:developers, logs, get,
+          group-a-p/*, allow   
+  # syncWindows:
+  # - kind: deny
+  #   schedule: '* * * * *'
+  #   duration: 24h 
+  #   manualSync: true
+  #   clusters:
+  #   - '*'
+  #   applications:
+  #   - '*'
+  #   namespaces:
+  #   - '*'
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  name: group-b
-  namespace: argocd-instance
+  name: group-b-p
+  namespace: argocd-cluster-scope
 spec:
   description: group-b 
   sourceRepos:
     - '*'
+  sourceNamespaces:
+    - group-b-na
   destinations:
-    - namespace: group-b
+    - namespace: group-b-na
       server: https://kubernetes.default.svc 
   clusterResourceWhitelist:
     - group: '*'
@@ -78,5 +127,9 @@ spec:
         - >-
           p, proj:group-b:developers, applications, override,
           group-b/*, allow
+        - >-
+          p, proj:group-b:developers, applicationsets, *,
+          group-b/*, allow
+          
 ---
 

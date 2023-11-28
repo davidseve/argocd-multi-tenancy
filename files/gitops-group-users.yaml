@@ -2,6 +2,17 @@
 kind: Group
 apiVersion: user.openshift.io/v1
 metadata:
+  name: group-all
+users:
+ - userA
+ - userA-view
+ - userB
+ - userC
+ - kubeadmin
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
   name: group-a
 users:
  - userA
@@ -10,7 +21,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: group-a-admin-binding
-  namespace: group-a
+  namespace: group-a-na
 subjects:
 - kind: Group
   name: group-a
@@ -23,6 +34,13 @@ roleRef:
 kind: Group
 apiVersion: user.openshift.io/v1
 metadata:
+  name: group-a-view
+users:
+ - userA-view
+---
+kind: Group
+apiVersion: user.openshift.io/v1
+metadata:
   name: group-b
 users:
  - userB
@@ -31,7 +49,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: group-b-admin-binding
-  namespace: group-b
+  namespace: group-b-na
 subjects:
 - kind: Group
   name: group-b

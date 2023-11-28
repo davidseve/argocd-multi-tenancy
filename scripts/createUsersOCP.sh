@@ -1,6 +1,7 @@
 export HTPASSWD_FILE=/tmp/htpasswd
 
 htpasswd -c -B -b $HTPASSWD_FILE userA userA
+htpasswd -b $HTPASSWD_FILE userA-view userA-view
 htpasswd -b $HTPASSWD_FILE userB userB
 
 ##
