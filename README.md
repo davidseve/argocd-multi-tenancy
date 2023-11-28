@@ -179,66 +179,6 @@ You can log into the default Argo CD instance using the OpenShift users or kubea
 
 ### Configure resource quota/requests for OpenShift GitOps workloads
 
-- ArgoCD instance example:
-```yaml
-apiVersion: argoproj.io/v1beta1
-kind: ArgoCD
-metadata:
-  name: example
-spec:
-  server:
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 125m
-        memory: 128Mi
-    route:
-      enabled: true
-  applicationSet:
-    resources:
-      limits:
-        cpu: '2'
-        memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 512Mi
-  repo:
-    resources:
-      limits:
-        cpu: '1'
-        memory: 512Mi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-  sso:
-    dex:
-      resources:
-        limits:
-          cpu: 500m
-          memory: 256Mi
-        requests:
-          cpu: 250m
-          memory: 128Mi
-  redis:
-    resources:
-      limits:
-        cpu: 500m
-        memory: 256Mi
-      requests:
-        cpu: 250m
-        memory: 128Mi
-  controller:
-    resources:
-      limits:
-        cpu: '2'
-        memory: 2Gi
-      requests:
-        cpu: 250m
-        memory: 1Gi
-```
-
 - Useful documentation:
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#in-built-permissions-for-cluster-configuration
 
@@ -342,4 +282,5 @@ oc apply -f files/applications/application-example.yaml
   - https://github.com/redhat-developer/gitops-operator/blob/master/docs/OpenShift%20GitOps%20Usage%20Guide.md#monitoring
 
 ## How to configure ArgoCD at scale
-https://aws.amazon.com/es/blogs/opensource/argo-cd-application-controller-scalability-testing-on-amazon-eks/
+- Useful documentation:
+  - https://aws.amazon.com/es/blogs/opensource/argo-cd-application-controller-scalability-testing-on-amazon-eks/
