@@ -74,11 +74,20 @@ spec:
         - >-
           p, proj:group-a-p:developers, logs, get,
           group-a-p/*, allow   
-  # syncWindows:
+  syncWindows:
+  - kind: deny
+    schedule: '* * * * *'
+    duration: 24h 
+    manualSync: true
+    clusters:
+    - '*'
+    applications:
+    - '*'
+    namespaces:
+    - '*'
   # - kind: deny
   #   schedule: '* * * * *'
   #   duration: 24h 
-  #   manualSync: true
   #   clusters:
   #   - '*'
   #   applications:

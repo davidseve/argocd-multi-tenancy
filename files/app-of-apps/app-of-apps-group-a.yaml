@@ -2,16 +2,16 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: group-a-app-of-apps
-  namespace: argocd-instance
+  namespace: group-a-na
 spec:
   destination:
-    namespace: argocd-instance
+    namespace: group-a-na
     server: 'https://kubernetes.default.svc'
   project: group-a-p
   source:
     repoURL: https://github.com/davidseve/argocd-multi-tenancy.git
     path: files/applications
-    targetRevision: argocdinstance
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true
