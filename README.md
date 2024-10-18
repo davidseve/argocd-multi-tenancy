@@ -255,6 +255,7 @@ spec:
 ```bash
 oc login -u userA -p userA
 oc apply -f files/applications/application-example-wrong-project.yaml
+oc describe application/group-a-wrong-project
 ```
 Error message: application 'group-a-wrong-project' in namespace 'group-a-na' is not permitted to use project 'group-b-p'
 
