@@ -1,6 +1,6 @@
 oc apply -f files/namespaces-for-workloads.yaml
 oc apply -f files/namespaces-for-argocd-instance.yaml
-./scripts/createUsersCRC.sh
+./scripts/createUsersOCP.sh
 oc apply -f files/gitops-group-users.yaml
 oc apply -f files/argocd-controller-role-exclusions.yaml
 oc apply -f files/openshift-gitops-subscription.yaml

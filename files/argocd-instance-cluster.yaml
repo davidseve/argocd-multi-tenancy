@@ -24,8 +24,7 @@ spec:
 
       #Privileges at project level
       
-      p, role:clusters-get, clusters, get, https://kubernetes.default.svc, allow
-      g, group-all, role:clusters-get
+
 
     scopes: '[groups,name]'
   sourceNamespaces:
